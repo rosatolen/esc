@@ -288,9 +288,8 @@ func (_escStaticFS) prepare(name string) (*_escFile, error) {
 		if f.size == 0 {
 			return
 		}
-		var gr *zlib.Reader
 		b64 := base64.NewDecoder(base64.StdEncoding, bytes.NewBufferString(f.compressed))
-		gr, err = zlib.NewReader(b64)
+		gr, err := zlib.NewReader(b64)
 		if err != nil {
 			return
 		}
