@@ -2,7 +2,6 @@ package main
 
 import (
 	"bytes"
-	"compress/zlib"
 	"encoding/base64"
 	"flag"
 	"fmt"
@@ -67,7 +66,7 @@ type _escFile struct {
 	fileinfo os.FileInfo
 }
 
-func embed(conf *config) {
+func embed(conf *Config) {
 	var err error
 	if conf.ModTime != "" {
 		i, err := strconv.ParseInt(conf.ModTime, 10, 64)
@@ -153,13 +152,7 @@ func embed(conf *config) {
 			dirs[b] = true
 		}
 		var buf bytes.Buffer
-		gw := zlib.NewWriter(&buf)
-		if _, err := gw.Write(f.data); err != nil {
-			log.Fatal(err)
-		}
-		if err := gw.Close(); err != nil {
-			log.Fatal(err)
-		}
+		buf.Write(f.data)
 		t := f.fileinfo.ModTime().Unix()
 		if modTime != nil {
 			t = *modTime
@@ -234,7 +227,6 @@ const (
 
 import (
 	"bytes"
-	"compress/zlib"
 	"encoding/base64"
 	"io/ioutil"
 	"net/http"
@@ -289,11 +281,7 @@ func (_escStaticFS) prepare(name string) (*_escFile, error) {
 			return
 		}
 		b64 := base64.NewDecoder(base64.StdEncoding, bytes.NewBufferString(f.compressed))
-		gr, err := zlib.NewReader(b64)
-		if err != nil {
-			return
-		}
-		f.data, err = ioutil.ReadAll(gr)
+		f.data, err = ioutil.ReadAll(b64)
 	})
 	if err != nil {
 		return nil, err
