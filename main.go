@@ -19,7 +19,7 @@ import (
 )
 
 func main() {
-	conf := &config{}
+	conf := &Config{}
 
 	flag.StringVar(&conf.OutputFile, "o", "", "Output file, else stdout.")
 	flag.StringVar(&conf.Package, "pkg", "main", "Package.")
@@ -31,10 +31,10 @@ func main() {
 	flag.Parse()
 	conf.Files = flag.Args()
 
-	compress(conf)
+	embed(conf)
 }
 
-type config struct {
+type Config struct {
 	//Output file, else stdout
 	OutputFile string
 	//Package declaration for generated file
@@ -67,7 +67,7 @@ type _escFile struct {
 	fileinfo os.FileInfo
 }
 
-func compress(conf *config) {
+func embed(conf *config) {
 	var err error
 	if conf.ModTime != "" {
 		i, err := strconv.ParseInt(conf.ModTime, 10, 64)
